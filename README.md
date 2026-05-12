@@ -18,10 +18,12 @@ Each player rolls **5 dice**, one at a time. Your score is the sum of all dice m
 
 **Example:** you roll 3 · 3 · 5 · 5 · 2 → two pairs → base score 18 × 3 = **54 pts**
 
-## Run the game
+## Play the game
 
-No installation needed, just need a python editor.
+**In the browser — no install needed**
+Open `dice_roller.html` in any browser (Chrome, Firefox, Safari). Just double-click the file or use the GitHub Pages link.
 
+**In the terminal — requires Python 3**
 ```bash
 python dice_roller.py
 ```
@@ -30,3 +32,4 @@ python dice_roller.py
 
 - **Human vs Computer** — play against the CPU (default)
 - **Human vs Human** — pass the keyboard to a friend
+
