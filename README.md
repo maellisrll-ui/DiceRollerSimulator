@@ -20,7 +20,7 @@ Each player rolls **5 dice**, one at a time. Your score is the sum of all dice m
 
 ## Run the game
 
-No installation needed, just Python 3.
+No installation needed.
 
 ```bash
 python dice_roller.py
