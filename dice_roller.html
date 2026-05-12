@@ -1,1 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dice Roller Simulator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f4ef;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .game {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 1.5rem;
+    }
+
+    .screen {
+      background: #eceae3;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .players {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .player-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 14px;
+      padding: 1rem;
+    }
+
+    .player-card.active  { border: 2px solid #185FA5; }
+    .player-card.winner  { border: 2px solid #1D9E75; background: #E1F5EE; }
+
+    .player-name  { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+    .player-type  { font-size: 11px; color: #888; margin-bottom: 8px; }
+    .player-score { font-size: 28px; font-weight: 600; color: #1a1a1a; }
+    .player-bonus { font-size: 11px; color: #0F6E56; margin-top: 2px; min-height: 16px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:hover   { background: #f0f0f0; }
+    .btn:active  { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .btn-primary { background: #185FA5; color: #fff; border-color: #185FA5; }
+    .btn-primary:hover { background: #0C447C; }
+    .btn-primary:disabled { background: #185FA5; }
+
+    .btn-big { padding: 14px 36px; font-size: 18px; font-weight: 600; border-radius: 12px; }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 0;
+    }
+    .btn-link:hover { color: #1a1a1a; }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    /* Form */
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 13px; color: #555; }
+    .field input, .field select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 14px;
+    }
+
+    /* Dice */
+    .dice-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 1rem 0;
+    }
+
+    .dice-track {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .die-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .die-slot-label { font-size: 10px; color: #aaa; }
+
+    .dice-face {
+      width: 58px;
+      height: 58px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr;
+    }
+
+    .dice-face.rolling   { animation: shake 0.35s ease; }
+    .dice-face.highlight { border: 2px solid #1D9E75; background: #E1F5EE; }
+    .dice-face.highlight .pip { background: #085041; }
+    .dice-face.pending   { background: #e8e8e8; border: 1px dashed #ccc; }
+
+    .pc  { display: flex; align-items: center; justify-content: center; }
+    .pip { width: 9px; height: 9px; border-radius: 50%; background: #1a1a1a; }
+
+    /* Progress dots */
+    .progress-dots { display: flex; gap: 8px; }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #ccc;
+      transition: background 0.2s;
+    }
+    .dot.done    { background: #185FA5; }
+    .dot.current { background: #1D9E75; animation: pulse 0.8s infinite alternate; }
+
+    /* Status */
+    .status { font-size: 13px; color: #888; text-align: center; margin: 8px 0; min-height: 18px; }
+    .log    { font-size: 12px; color: #888; min-height: 20px; text-align: center; font-style: italic; margin-top: 4px; }
+
+    /* Winner */
+    .winner-banner { text-align: center; padding: 1rem; background: #E1F5EE; border-radius: 10px; margin-bottom: 1rem; }
+    .winner-banner .w-name  { font-size: 20px; font-weight: 600; color: #085041; }
+    .winner-banner .w-score { font-size: 13px; color: #0F6E56; margin-top: 2px; }
+
+    /* Rules */
+    .rules-overlay {
+      background: #eceae3;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .back-bar { display: flex; align-items: center; margin-bottom: 1rem; }
+
+    .rules-section { margin-bottom: 1.25rem; }
+    .rules-section h2 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-list { display: flex; flex-direction: column; gap: 8px; }
+    .step { display: flex; align-items: flex-start; gap: 10px; }
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #185FA5;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step p { font-size: 13px; color: #555; line-height: 1.5; }
+    .step p strong { color: #1a1a1a; font-weight: 600; }
+
+    .hand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hand-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hand-card.top { border-color: #1D9E75; }
+    .hand-name    { font-size: 13px; color: #1a1a1a; }
+    .hand-example { font-size: 11px; color: #888; margin-top: 2px; }
+    .hand-mult    { font-size: 15px; font-weight: 600; color: #185FA5; }
+    .hand-card.top .hand-mult { color: #0F6E56; }
+
+    .divider { height: 1px; background: #ddd; margin: 1.25rem 0; }
+
+    @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+    @keyframes shake {
+      0%,100% { transform: rotate(0); }
+      20%     { transform: rotate(-15deg); }
+      40%     { transform: rotate(15deg); }
+      60%     { transform: rotate(-8deg); }
+      80%     { transform: rotate(8deg); }
+    }
+  </style>
+</head>
+<body>
+<div class="game">
+
+  <!-- ── SETUP (home) ── -->
+  <div id="setup-screen">
+    <div class="title">🎲 Dice Roller</div>
+    <div class="subtitle">Roll each die one by one · Highest score wins</div>
+    <div class="screen">
+      <div class="section-label">Set up players</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field">
+            <label>Player 1 name</label>
+            <input id="p1name" type="text" value="Player 1" />
+          </div>
+          <div class="field">
+            <label>Player 2</label>
+            <select id="p2type">
+              <option value="computer">Computer</option>
+              <option value="human">Human</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" id="p2name-field" style="display:none">
+          <label>Player 2 name</label>
+          <input id="p2name" type="text" value="Player 2" />
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <button class="btn-link" onclick="showRules()">❓ How to play</button>
+          <button class="btn btn-primary" onclick="startGame()">▶ Start game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RULES ── -->
+  <div id="rules-screen" style="display:none">
+    <div class="back-bar">
+      <button class="btn-link" onclick="hideRules()">← Back</button>
+    </div>
+    <div class="rules-overlay">
+      <div class="rules-section">
+        <h2>📋 How to play</h2>
+        <div class="step-list">
+          <div class="step">
+            <div class="step-num">1</div>
+            <p>Each player takes a turn. You roll <strong>5 dice</strong>, one at a time.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <p>Your <strong>score = sum of all dice × your bonus multiplier</strong>.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <p>The player with the <strong>highest score wins</strong>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="rules-section">
+        <h2>⭐ Bonus multipliers</h2>
+        <div class="hand-grid">
+          <div class="hand-card">
+            <div><div class="hand-name">One pair</div><div class="hand-example">3 3 1 5 6</div></div>
+            <div class="hand-mult">×2</div>
+          </div>
+          <div class="hand-card">
+            <div><div class="hand-name">Two pairs</div><div class="hand-example">3 3 5 5 1</div></div>
+            <div class="hand-mult">×3</div>
+          </div>
+          <div class="hand-card">
+            <div><div class="hand-name">Three of a kind</div><div class="hand-example">4 4 4 2 6</div></div>
+            <div class="hand-mult">×4</div>
+          </div>
+          <div class="hand-card">
+            <div><div class="hand-name">Full house</div><div class="hand-example">2 2 2 5 5</div></div>
+            <div class="hand-mult">×5</div>
+          </div>
+          <div class="hand-card">
+            <div><div class="hand-name">Four of a kind</div><div class="hand-example">6 6 6 6 3</div></div>
+            <div class="hand-mult">×6</div>
+          </div>
+          <div class="hand-card">
+            <div><div class="hand-name">Five of a kind</div><div class="hand-example">4 4 4 4 4</div></div>
+            <div class="hand-mult">×8</div>
+          </div>
+          <div class="hand-card top" style="grid-column:span 2">
+            <div><div class="hand-name">Straight</div><div class="hand-example">1 2 3 4 5 &nbsp;or&nbsp; 2 3 4 5 6</div></div>
+            <div class="hand-mult">×12</div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="rules-section" style="margin-bottom:0">
+        <h2>💡 Example</h2>
+        <p style="font-size:13px;color:#555;line-height:1.6">
+          You roll <strong>3 · 3 · 5 · 5 · 2</strong> → two pairs → base 18 × 3 = <strong style="color:#185FA5">54 pts</strong>
+        </p>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-primary btn-big" onclick="hideRules()">▶ Got it, let's play!</button>
+    </div>
+  </div>
+
+  <!-- ── GAME ── -->
+  <div id="game-screen" style="display:none">
+    <div class="players">
+      <div class="player-card" id="card0">
+        <div class="player-name" id="pname0">—</div>
+        <div class="player-type" id="ptype0"></div>
+        <div class="player-score" id="pscore0">0</div>
+        <div class="player-bonus" id="pbonus0"></div>
+      </div>
+      <div class="player-card" id="card1">
+        <div class="player-name" id="pname1">—</div>
+        <div class="player-type" id="ptype1"></div>
+        <div class="player-score" id="pscore1">0</div>
+        <div class="player-bonus" id="pbonus1"></div>
+      </div>
+    </div>
+
+    <div class="screen">
+      <div class="section-label" id="turn-label">Round 1 · Player's turn</div>
+      <div class="dice-area">
+        <div class="progress-dots" id="progress-dots"></div>
+        <div class="dice-track" id="dice-track"></div>
+        <div class="status" id="status-text">Ready to roll!</div>
+        <div class="log" id="log-text"></div>
+        <button class="btn btn-primary btn-big" id="roll-btn" onclick="rollOne()">
+          🎲 <span id="roll-btn-label">Roll die 1</span>
+        </button>
+        <button class="btn" id="next-btn" onclick="nextTurn()" style="display:none">
+          Next player's turn →
+        </button>
+      </div>
+    </div>
+
+    <div id="result-screen" style="display:none">
+      <div class="winner-banner">
+        <div class="w-name"  id="winner-name">🏆 Winner!</div>
+        <div class="w-score" id="winner-detail"></div>
+      </div>
+      <div class="controls">
+        <button class="btn" onclick="showRulesFromGame()">❓ Rules</button>
+        <button class="btn btn-primary" onclick="resetGame()">↺ Play again</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.game -->
+
+<script>
+  const TOTAL = 5;
+
+  // Pip positions on a 3×3 grid [row, col]
+  const LAYOUTS = {
+    1: [[1,1]],
+    2: [[0,0],[2,2]],
+    3: [[0,0],[1,1],[2,2]],
+    4: [[0,0],[0,2],[2,0],[2,2]],
+    5: [[0,0],[0,2],[1,1],[2,0],[2,2]],
+    6: [[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]]
+  };
+
+  let players = [], currentPlayer = 0, rolled = [], turnResults = [], rolling = false, rulesFrom = null;
+
+  // ── Setup listeners ──────────────────────────────────────────
+  document.getElementById('p2type').addEventListener('change', function () {
+    document.getElementById('p2name-field').style.display = this.value === 'human' ? 'block' : 'none';
+  });
+
+  // ── Navigation ───────────────────────────────────────────────
+  function showRules() {
+    rulesFrom = 'setup';
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('rules-screen').style.display  = 'block';
+  }
+  function showRulesFromGame() {
+    rulesFrom = 'game';
+    document.getElementById('game-screen').style.display  = 'none';
+    document.getElementById('rules-screen').style.display = 'block';
+  }
+  function hideRules() {
+    document.getElementById('rules-screen').style.display = 'none';
+    if (rulesFrom === 'game') document.getElementById('game-screen').style.display  = 'block';
+    else                      document.getElementById('setup-screen').style.display = 'block';
+  }
+
+  // ── Dice rendering ───────────────────────────────────────────
+  function makeFaceHTML(val, highlight) {
+    const pips = LAYOUTS[val] || [];
+    let cells = '';
+    for (let r = 0; r < 3; r++)
+      for (let c = 0; c < 3; c++) {
+        const has = pips.some(([pr, pc]) => pr === r && pc === c);
+        cells += `<div class="pc">${has ? '<div class="pip"></div>' : ''}</div>`;
+      }
+    return `<div class="dice-face${highlight ? ' highlight' : ''}">${cells}</div>`;
+  }
+
+  function renderTrack(highlights = []) {
+    const track = document.getElementById('dice-track');
+    track.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'die-slot';
+      slot.innerHTML =
+        (i < rolled.length
+          ? makeFaceHTML(rolled[i], highlights.includes(i))
+          : '<div class="dice-face pending"></div>') +
+        `<div class="die-slot-label">D${i + 1}</div>`;
+      track.appendChild(slot);
+    }
+  }
+
+  function renderDots() {
+    const dots = document.getElementById('progress-dots');
+    dots.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i < rolled.length ? ' done' : i === rolled.length ? ' current' : '');
+      dots.appendChild(d);
+    }
+  }
+
+  // ── Scoring ──────────────────────────────────────────────────
+  function analyze(vals) {
+    const counts = {};
+    vals.forEach(v => counts[v] = (counts[v] || 0) + 1);
+    const freqs  = Object.values(counts).sort((a, b) => b - a);
+    const sorted = [...vals].sort((a, b) => a - b);
+    const isStraight =
+      JSON.stringify(sorted) === JSON.stringify([1,2,3,4,5]) ||
+      JSON.stringify(sorted) === JSON.stringify([2,3,4,5,6]);
+
+    let multiplier = 1, bonusText = '', highlights = [];
+
+    if (isStraight) {
+      multiplier = 12; bonusText = 'Straight! ×12'; highlights = [0,1,2,3,4];
+
+    } else if (freqs[0] === 5) {
+      multiplier = 8; bonusText = 'Five of a kind! ×8';
+      const v = +Object.keys(counts).find(k => counts[k] === 5);
+      highlights = vals.map((x, i) => x === v ? i : -1).filter(i => i >= 0);
+
+    } else if (freqs[0] === 4) {
+      multiplier = 6; bonusText = 'Four of a kind! ×6';
+      const v = +Object.keys(counts).find(k => counts[k] === 4);
+      highlights = vals.map((x, i) => x === v ? i : -1).filter(i => i >= 0);
+
+    } else if (freqs[0] === 3 && freqs[1] === 2) {
+      multiplier = 5; bonusText = 'Full house! ×5'; highlights = [0,1,2,3,4];
+
+    } else if (freqs[0] === 3) {
+      multiplier = 4; bonusText = 'Three of a kind! ×4';
+      const v = +Object.keys(counts).find(k => counts[k] === 3);
+      highlights = vals.map((x, i) => x === v ? i : -1).filter(i => i >= 0);
+
+    } else {
+      const pairs = Object.keys(counts).filter(k => counts[k] === 2).map(Number);
+      if (pairs.length === 2) {
+        multiplier = 3; bonusText = 'Two pairs! ×3';
+        highlights = vals.map((x, i) => pairs.includes(x) ? i : -1).filter(i => i >= 0);
+      } else if (pairs.length === 1) {
+        multiplier = 2; bonusText = 'One pair! ×2';
+        highlights = vals.map((x, i) => x === pairs[0] ? i : -1).filter(i => i >= 0);
+      }
+    }
+
+    const base = vals.reduce((a, b) => a + b, 0);
+    return { base, multiplier, finalScore: base * multiplier, bonusText, highlights };
+  }
+
+  // ── Roll one die ─────────────────────────────────────────────
+  function rollOne() {
+    if (rolling) return;
+    rolling = true;
+    const btn = document.getElementById('roll-btn');
+    btn.disabled = true;
+    const idx = rolled.length;
+    renderTrack(); renderDots();
+
+    const slot = document.getElementById('dice-track').children[idx];
+    if (slot) slot.querySelector('.dice-face').classList.add('rolling');
+
+    setTimeout(() => {
+      const val = Math.floor(Math.random() * 6) + 1;
+      rolled.push(val);
+
+      if (rolled.length < TOTAL) {
+        renderTrack(); renderDots();
+        document.getElementById('status-text').textContent = `Die ${idx + 1}: rolled a ${val} · Roll die ${rolled.length + 1}`;
+        document.getElementById('roll-btn-label').textContent = `Roll die ${rolled.length + 1}`;
+        btn.disabled = false;
+        rolling = false;
+      } else {
+        const a = analyze(rolled);
+        renderTrack(a.highlights); renderDots();
+        players[currentPlayer].score = a.finalScore;
+        players[currentPlayer].rolls = [...rolled];
+        document.getElementById('pscore' + currentPlayer).textContent = a.finalScore;
+        document.getElementById('pbonus' + currentPlayer).textContent = a.bonusText;
+        document.getElementById('status-text').textContent =
+          `Dice: ${rolled.join(' · ')} · Base: ${a.base}` +
+          (a.multiplier > 1 ? ` × ${a.multiplier} = ${a.finalScore}` : '');
+        document.getElementById('log-text').textContent = a.bonusText ? '✨ ' + a.bonusText : 'No bonus.';
+        turnResults.push({ player: currentPlayer, score: a.finalScore });
+        btn.style.display = 'none';
+        if (turnResults.length === 2) setTimeout(showResult, 600);
+        else document.getElementById('next-btn').style.display = 'inline-flex';
+        rolling = false;
+      }
+    }, 380);
+  }
+
+  // ── Turn management ──────────────────────────────────────────
+  function nextTurn() {
+    currentPlayer = 1 - currentPlayer;
+    rolled = [];
+    updateCards(); renderTrack(); renderDots();
+    document.getElementById('turn-label').textContent   = `Round 1 · ${players[currentPlayer].name}'s turn`;
+    document.getElementById('status-text').textContent  = 'Ready to roll!';
+    document.getElementById('log-text').textContent     = '';
+    document.getElementById('roll-btn').style.display   = 'inline-flex';
+    document.getElementById('roll-btn').disabled        = false;
+    document.getElementById('roll-btn-label').textContent = 'Roll die 1';
+    document.getElementById('next-btn').style.display   = 'none';
+    if (players[currentPlayer].type === 'computer') scheduleComputer();
+  }
+
+  function scheduleComputer() {
+    document.getElementById('roll-btn').style.display  = 'none';
+    document.getElementById('status-text').textContent = '🤖 Computer is rolling...';
+    function autoRoll() {
+      if (rolled.length >= TOTAL) return;
+      const val = Math.floor(Math.random() * 6) + 1;
+      rolled.push(val);
+      if (rolled.length < TOTAL) {
+        renderTrack(); renderDots();
+        document.getElementById('status-text').textContent = `Computer rolled die ${rolled.length}: ${val}`;
+        setTimeout(autoRoll, 600);
+      } else {
+        const a = analyze(rolled);
+        renderTrack(a.highlights); renderDots();
+        players[currentPlayer].score = a.finalScore;
+        document.getElementById('pscore' + currentPlayer).textContent = a.finalScore;
+        document.getElementById('pbonus' + currentPlayer).textContent = a.bonusText;
+        document.getElementById('status-text').textContent = `Computer done! Dice: ${rolled.join(' · ')} · Score: ${a.finalScore}`;
+        document.getElementById('log-text').textContent = a.bonusText ? '✨ ' + a.bonusText : 'No bonus.';
+        turnResults.push({ player: currentPlayer, score: a.finalScore });
+        setTimeout(showResult, 700);
+      }
+    }
+    setTimeout(autoRoll, 700);
+  }
+
+  function updateCards() {
+    players.forEach((p, i) => {
+      document.getElementById('pname'  + i).textContent = p.name;
+      document.getElementById('ptype'  + i).textContent = p.type === 'computer' ? '🤖 Computer' : '👤 Human';
+      document.getElementById('pscore' + i).textContent = p.score;
+      document.getElementById('pbonus' + i).textContent = '';
+      document.getElementById('card'   + i).className   = 'player-card' + (i === currentPlayer ? ' active' : '');
+    });
+  }
+
+  // ── Result ───────────────────────────────────────────────────
+  function showResult() {
+    const s0 = players[0].score, s1 = players[1].score;
+    let name, detail;
+    if (s0 > s1) {
+      name = '🏆 ' + players[0].name + ' wins!'; detail = `${s0} pts vs ${s1} pts`;
+      document.getElementById('card0').className = 'player-card winner';
+    } else if (s1 > s0) {
+      name = '🏆 ' + players[1].name + ' wins!'; detail = `${s1} pts vs ${s0} pts`;
+      document.getElementById('card1').className = 'player-card winner';
+    } else {
+      name = "🤝 It's a tie!"; detail = `Both scored ${s0} pts`;
+    }
+    document.getElementById('winner-name').textContent   = name;
+    document.getElementById('winner-detail').textContent = detail;
+    document.getElementById('result-screen').style.display = 'block';
+  }
+
+  // ── Start / Reset ────────────────────────────────────────────
+  function startGame() {
+    const p1     = document.getElementById('p1name').value.trim() || 'Player 1';
+    const p2type = document.getElementById('p2type').value;
+    const p2name = p2type === 'human'
+      ? (document.getElementById('p2name').value.trim() || 'Player 2')
+      : 'Computer';
+
+    players = [
+      { name: p1,     type: 'human',   score: 0, rolls: [] },
+      { name: p2name, type: p2type,    score: 0, rolls: [] }
+    ];
+    currentPlayer = 0; rolled = []; turnResults = [];
+
+    document.getElementById('setup-screen').style.display   = 'none';
+    document.getElementById('game-screen').style.display    = 'block';
+    document.getElementById('result-screen').style.display  = 'none';
+    document.getElementById('turn-label').textContent        = `Round 1 · ${players[0].name}'s turn`;
+    document.getElementById('roll-btn').style.display        = 'inline-flex';
+    document.getElementById('roll-btn').disabled             = false;
+    document.getElementById('roll-btn-label').textContent    = 'Roll die 1';
+    document.getElementById('next-btn').style.display        = 'none';
+    document.getElementById('status-text').textContent       = 'Ready to roll!';
+    document.getElementById('log-text').textContent          = '';
+
+    updateCards(); renderTrack(); renderDots();
+    if (players[0].type === 'computer') scheduleComputer();
+  }
+
+  function resetGame() {
+    players = []; currentPlayer = 0; rolled = []; turnResults = [];
+    document.getElementById('result-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display   = 'none';
+    document.getElementById('setup-screen').style.display  = 'block';
+  }
+</script>
+</body>
+</html>
