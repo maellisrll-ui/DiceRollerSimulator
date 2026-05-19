@@ -1,34 +1,21 @@
+#Import random (to generate random numbers) and Counter (to count how many times each value appears)
 import random
 from collections import Counter
 
-# ─────────────────────────────────────────────────────────────
-#  DICE ROLLER SIMULATOR
-#
-#  Rules:
-#    - Each player rolls 5 dices, one at a time
-#    - Score = sum of all dices × bonus multiplier
-#    - Highest score wins
-#
-#  Bonus multipliers:
-#    One pair          ×2
-#    Two pairs         ×3
-#    Three of a kind   ×4
-#    Full house (3+2)  ×5
-#    Four of a kind    ×6
-#    Five of a kind    ×8
-#    Straight          ×12
-# ─────────────────────────────────────────────────────────────
 
+#We fix the number of dices, we choose it to be 5 and we can modify it in the future if we want
 DICE_COUNT = 5
 
 
+#Defining the Header of the Game, we wanted it to be in a frame for an aesthetic purpose.
 def print_header():
     print("╔══════════════════════════════════════════╗")
-    print("║        🎲  DICE ROLLER SIMULATOR 🎲      ║")
-    print("║    Roll 5 dice · Highest score wins      ║")
+    print("║      🎲 DICE ROLLER SIMULATOR 🎲         ║")
+    print("║      Roll 5 dice · Highest score wins    ║")
     print("╚══════════════════════════════════════════╝")
 
 
+#Defining the Rules of the Game for the player. It shows how to play and the bonuses.
 def print_rules():
     print()
     print("┌──────────────────────────────────────────┐")
@@ -54,21 +41,24 @@ def print_rules():
     print()
 
 
+#Defining the Roll Die function, picking a random intenger between 1 and 6
 def roll_die():
     return random.randint(1, 6)
 
 
+#Defining how we are showing the dices on the screen.
+    #The highlight function will give some positions (the multipliers) in highlight. If nothing is given, we put an empty list.
+    #The Parts function will create a new empty list to contain the dices.
+    #We created a loop on the dices, i is the index and d is the value of the dice.
+    #We decided to use the .join(parts) to assemble the elements with spaces.
 def display_dice(dice, highlights=None):
-    """
-    Print dice values. Highlighted dice (forming a bonus)
-    are shown in [brackets], others without.
-    """
     if highlights is None:
         highlights = []
     parts = []
     for i, d in enumerate(dice):
         parts.append(f"[{d}]" if i in highlights else f" {d} ")
-    print("  Dice: " + "  ".join(parts))
+    print("Dice:" + "  ".join(parts))
+
 
 
 def analyze(dice):
