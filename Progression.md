@@ -1,6 +1,6 @@
 # **How we managed our project**
 
-**Rules of the Project**
+## **Rules of the Project**
 
 1. Describe the game in human language (it could be your readme file)
 - What is the overall description
@@ -31,7 +31,7 @@
 - Presentation - up to 5 min
 
 
-**Our Process**
+## **Our Process**
 
 1. We started by defining the game, and the different rules.
 2. We drew the flowchart.
