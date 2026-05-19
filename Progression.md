@@ -29,3 +29,12 @@
 - Code should work, 
 - As well as all the team should know what’s going on.
 - Presentation - up to 5 min
+
+
+**Our Process**
+
+1. We started by defining the game, and the different rules.
+2. We drew the flowchart.
+3. We divided the tasks and started coding on our computers.
+4. We sent our codes to the group chat and we upload it directly on GitHub.
+5. We decided to add the HTML part for the presentation purpose
