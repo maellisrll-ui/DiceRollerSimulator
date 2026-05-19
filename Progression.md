@@ -1,4 +1,4 @@
-**How we managed our project**
+# **How we managed our project**
 
 **Rules of the Project**
 
