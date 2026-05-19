@@ -26,10 +26,13 @@ The player with the highest score wins.
 | Straight | 1 2 3 4 5 or 2 3 4 5 6 | ×12 |
 
 **Example:** you roll 1 · 2 · 3 · 3 · 4 → one pair → base score 13 × 2 = **26 pts**
+
 **Example:** you roll 3 · 3 · 5 · 5 · 2 → two pairs → base score 18 × 3 = **54 pts**
+
 **Example:** you roll 3 · 3 · 3 · 5 · 5 → Full house → base score 19 × 5 = **95 pts**
 
 The **lowest score** happens when you roll 1 · 1 · 2 · 3 · 4 → one pair → base score 11 × 2 = **22 pts**
+
 The **highest score** happens when you roll 2 · 3 · 4 · 5 · 6 → Straight → base score 20 × 12 = **240 pts** 
 
 
