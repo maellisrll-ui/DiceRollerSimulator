@@ -8,7 +8,7 @@ Good luck and have fun !!
 
 
 
-### How to play
+### How to play 🎲
 
 Each player rolls **5 dice**, one at a time. 
 
@@ -21,7 +21,7 @@ The player with the highest score wins.
 
 
 
-### Bonus multipliers
+### Bonus multipliers 🎲
 
 | Hand | Example | Multiplier |
 |---|---|---|
@@ -46,7 +46,7 @@ The **highest score** happens when you roll 2 · 3 · 4 · 5 · 6 → Straight �
 
 
 
-### Play the game
+### Play the game 🎲
 
 **In the browser — no install needed**
 Open `dice_roller.html` in any browser (Chrome, Firefox, Safari). Just double-click the file or use the GitHub Pages link.
