@@ -1,8 +1,8 @@
-# DiceRollerSimulator
+# DiceRollerSimulator 🎲
 
 Welcome to our group's game ! We are happy to show you our work for the Python class. We've coded a dice roller simulator that enables you to play against your friend or against the computer. The objective is to roll 5 dices and to make the highest score. 
 Good luck and have fun !!
-- Jefferson, Malika, Ahmad, Walid, Larissa, and Maëllis
+🩷 By Jefferson, Malika, Ahmad, Walid, Larissa, and Maëllis 🩷
 
 
 ### How to play
