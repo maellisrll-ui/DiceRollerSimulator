@@ -30,6 +30,19 @@
 - As well as all the team should know what’s going on.
 - Presentation - up to 5 min
 
+## Our Group Members
+- Jefferson
+- Ahmad
+- Larisse
+- Malika
+- Walid
+- Johanne
+- Maëllis
+
+
+## Our Subject
+We selected the Dice Roller Simulator. 
+
 
 ## **Our Process**
 
