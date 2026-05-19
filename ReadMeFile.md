@@ -8,7 +8,7 @@ Good luck and have fun !!
 
 
 
-### How to play 🎲
+## How to play 🎲
 
 Each player rolls **5 dice**, one at a time. 
 
