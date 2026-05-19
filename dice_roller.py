@@ -60,33 +60,35 @@ def display_dice(dice, highlights=None):
     print("Dice:" + "  ".join(parts))
 
 
-
+#Defining the analyze of the game. 
+    #This analyze function will detect the combinaisons and return the multipliers, the bonus name and the highlight (multiplier, bonus_name, highlight_indices).
+    #The counts will count how many times each value appears, the sorted_dice will detect the suites and the freqs will sort the number of counts in a descending order (from the strongest to the lowest).
 def analyze(dice):
-    """
-    Analyze dice and return (multiplier, bonus_name, highlight_indices).
-    """
     counts = Counter(dice)
     sorted_dice = sorted(dice)
     freqs = sorted(counts.values(), reverse=True)
 
-    # Straight: 1-2-3-4-5 or 2-3-4-5-6
+    #Straight: 1-2-3-4-5 or 2-3-4-5-6
     if sorted_dice in ([1, 2, 3, 4, 5], [2, 3, 4, 5, 6]):
         return 12, "Straight!!!!!!!", list(range(DICE_COUNT))
 
+    #Five of a kind: all the same elements 
     if freqs[0] == 5:
         val = [v for v, c in counts.items() if c == 5][0]
         idx = [i for i, d in enumerate(dice) if d == val]
         return 8, "Five of a kind!!!!!!", idx
 
+    #Four of a kind: four same elements
     if freqs[0] == 4:
         val = [v for v, c in counts.items() if c == 4][0]
         idx = [i for i, d in enumerate(dice) if d == val]
         return 6, "Four of a kind!!!!", idx
 
-    # Full house: exactly one triple + one pair
+    # Full house: exactly one triple + one pair (all the dice are useful so everything is highlighted)
     if freqs == [3, 2]:
         return 5, "Full house!!!!", list(range(DICE_COUNT))
 
+    #
     if freqs[0] == 3:
         val = [v for v, c in counts.items() if c == 3][0]
         idx = [i for i, d in enumerate(dice) if d == val]
@@ -102,6 +104,7 @@ def analyze(dice):
         return 2, "One pair!", idx
 
     return 1, "No bonus, damn...", []
+
 
 
 def player_turn(name, is_computer=False):
