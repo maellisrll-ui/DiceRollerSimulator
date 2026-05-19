@@ -48,10 +48,16 @@ The **highest score** happens when you roll 2 · 3 · 4 · 5 · 6 → Straight �
 
 ### Play the game 🎲
 
-**In the browser — no install needed**
-Open `dice_roller.html` in any browser (Chrome, Firefox, Safari). Just double-click the file or use the GitHub Pages link.
+**In the browser : no install needed**
 
-**In the terminal — requires Python 3**
+
+Open `dice_roller.html` in any browser (Chrome, Firefox, Safari). 
+
+Just double-click the file or use the GitHub Pages link.
+
+
+**In the terminal : requires Python 3**
+
 ```bash
 python dice_roller.py
 ```
@@ -62,6 +68,6 @@ python dice_roller.py
 We have decided on two modes, you can either play against your computer, or against your friends.
 Future modes of the game include an online version that enables you to play against foreigner at the other corner of the World.
 
-- **Human vs Computer** — play against the CPU (default) 🤖
-- **Human vs Human** — pass the keyboard to a friend 🧠
+- **Human vs Computer** : play against the CPU (default) 🤖
+- **Human vs Human** : pass the keyboard to a friend 🧠
 
