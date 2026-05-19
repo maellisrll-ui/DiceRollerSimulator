@@ -21,7 +21,7 @@ The player with the highest score wins.
 
 
 
-### Bonus multipliers 🎲
+## Bonus multipliers 🎲
 
 | Hand | Example | Multiplier |
 |---|---|---|
@@ -32,6 +32,8 @@ The player with the highest score wins.
 | Four of a kind | 6 6 6 6 3 | ×6 |
 | Five of a kind | 4 4 4 4 4 | ×8 |
 | Straight | 1 2 3 4 5 or 2 3 4 5 6 | ×12 |
+
+### Scores Examples 🎲
 
 **Example:** you roll 1 · 2 · 3 · 3 · 4 → one pair → base score 13 × 2 = **26 pts**
 
@@ -46,7 +48,7 @@ The **highest score** happens when you roll 2 · 3 · 4 · 5 · 6 → Straight �
 
 
 
-### Play the game 🎲
+## Play the game 🎲
 
 **In the browser : no install needed**
 
