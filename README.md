@@ -57,11 +57,11 @@ python dice_roller.py
 ```
 
 
-## Game modes
+## Game modes 🎲
 
 We have decided on two modes, you can either play against your computer, or against your friends.
 Future modes of the game include an online version that enables you to play against foreigner at the other corner of the World.
 
-- **Human vs Computer** — play against the CPU (default)
-- **Human vs Human** — pass the keyboard to a friend
+- **Human vs Computer** — play against the CPU (default) 🤖
+- **Human vs Human** — pass the keyboard to a friend 🧠
 
