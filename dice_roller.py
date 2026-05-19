@@ -5,8 +5,8 @@ from collections import Counter
 #  DICE ROLLER SIMULATOR
 #
 #  Rules:
-#    - Each player rolls 5 dice, one at a time
-#    - Score = sum of all dice × bonus multiplier
+#    - Each player rolls 5 dices, one at a time
+#    - Score = sum of all dices × bonus multiplier
 #    - Highest score wins
 #
 #  Bonus multipliers:
@@ -24,7 +24,7 @@ DICE_COUNT = 5
 
 def print_header():
     print("╔══════════════════════════════════════════╗")
-    print("║         🎲  DICE ROLLER SIMULATOR        ║")
+    print("║        🎲  DICE ROLLER SIMULATOR 🎲      ║")
     print("║    Roll 5 dice · Highest score wins      ║")
     print("╚══════════════════════════════════════════╝")
 
@@ -34,7 +34,7 @@ def print_rules():
     print("┌──────────────────────────────────────────┐")
     print("│               HOW TO PLAY                │")
     print("├──────────────────────────────────────────┤")
-    print("│  1. Each player rolls 5 dice one by one  │")
+    print("│  1. Each player rolls 5 dices one by one │")
     print("│  2. Score = sum of dice × bonus          │")
     print("│  3. Highest score wins                   │")
     print("├──────────────────────────────────────────┤")
@@ -81,37 +81,37 @@ def analyze(dice):
 
     # Straight: 1-2-3-4-5 or 2-3-4-5-6
     if sorted_dice in ([1, 2, 3, 4, 5], [2, 3, 4, 5, 6]):
-        return 12, "Straight!", list(range(DICE_COUNT))
+        return 12, "Straight!!!!!!!", list(range(DICE_COUNT))
 
     if freqs[0] == 5:
         val = [v for v, c in counts.items() if c == 5][0]
         idx = [i for i, d in enumerate(dice) if d == val]
-        return 8, "Five of a kind!", idx
+        return 8, "Five of a kind!!!!!!", idx
 
     if freqs[0] == 4:
         val = [v for v, c in counts.items() if c == 4][0]
         idx = [i for i, d in enumerate(dice) if d == val]
-        return 6, "Four of a kind!", idx
+        return 6, "Four of a kind!!!!", idx
 
     # Full house: exactly one triple + one pair
     if freqs == [3, 2]:
-        return 5, "Full house!", list(range(DICE_COUNT))
+        return 5, "Full house!!!!", list(range(DICE_COUNT))
 
     if freqs[0] == 3:
         val = [v for v, c in counts.items() if c == 3][0]
         idx = [i for i, d in enumerate(dice) if d == val]
-        return 4, "Three of a kind!", idx
+        return 4, "Three of a kind!!!", idx
 
     pairs = [v for v, c in counts.items() if c == 2]
     if len(pairs) == 2:
         idx = [i for i, d in enumerate(dice) if d in pairs]
-        return 3, "Two pairs!", idx
+        return 3, "Two pairs!!", idx
 
     if len(pairs) == 1:
         idx = [i for i, d in enumerate(dice) if d == pairs[0]]
         return 2, "One pair!", idx
 
-    return 1, "No bonus", []
+    return 1, "No bonus, damn...", []
 
 
 def player_turn(name, is_computer=False):
